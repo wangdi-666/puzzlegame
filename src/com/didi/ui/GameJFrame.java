@@ -1,12 +1,19 @@
 package com.didi.ui;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Random;
 
-public class GameJFrame extends JFrame {
+public class GameJFrame extends JFrame implements KeyListener {
     // 跟主界面相关的代码，写在这个页面中
 
     int[][] data = new int[4][4];
+
+    // 记录空白方块在二维数组中的位置
+    int x = 0;
+    int y = 0;
 
     public GameJFrame(){
         //初始化界面
@@ -37,7 +44,12 @@ public class GameJFrame extends JFrame {
         }
 
         for (int i = 0; i < tempArr.length; i++) {
-            data[i / 4][i % 4] = tempArr[i];
+            if (tempArr[i] == 0){
+                x = i / 4;
+                y = i % 4;
+            }else {
+                data[i / 4][i % 4] = tempArr[i];
+            }
         }
 
     }
@@ -45,17 +57,31 @@ public class GameJFrame extends JFrame {
     // 初始化图片
     private void initImage() {
 
+        // 清空原本已经出现的所有图片
+        this.getContentPane().removeAll();
+
+        // 加载图片细节：先加载的图片会放在上面，后加载的图片在下面
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 int num = data[i][j];
 //            ImageIcon icon = new ImageIcon("D:\\code\\puzzlegame\\image\\animal\\animal3\\1.jpg");
-                JLabel jLabel = new JLabel(new ImageIcon("D:\\code\\puzzlegame\\image\\animal\\animal3\\"+ num +".jpg"));
+                JLabel jLabel = new JLabel(new ImageIcon("image\\animal\\animal3\\"+ num +".jpg"));
                 // 指定图片位置
-                jLabel.setBounds(105 * i,j * 105,105,105);
+                jLabel.setBounds(105 * i + 83,j * 105 + 134,105,105);
 //        this.add(jLabel);
+                // 给小图片设置边框
+                jLabel.setBorder(new BevelBorder(BevelBorder.LOWERED));
                 this.getContentPane().add(jLabel);
             }
         }
+
+        // 添加背景图片
+        JLabel background = new JLabel(new ImageIcon("image\\background.png"));
+        background.setBounds(40, 40, 508, 560);
+        this.getContentPane().add(background);
+
+        //刷新一下界面
+        this.getContentPane().repaint();
     }
 
 
@@ -99,5 +125,73 @@ public class GameJFrame extends JFrame {
 
         // 取消默认的居中放置，只有取消了才会按照XY轴的形式添加组件
         this.setLayout(null);
+
+        //给整个界面添加键盘监听事件
+        this.addKeyListener(this);
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        // 对上，下，左，右进行判断
+        // 左：37 上：38 右：39 下： 40（不用记住，用到了直接打印）
+        int code = e.getKeyCode();
+//        System.out.println(code);
+        // 调用的坐标上和左是反的，下和右是反的
+        if (code == 37){
+            System.out.println("向左移动");
+
+            if (x == 3){
+                return;
+            }
+            // x,y 表示当前空白块
+            data[x][y] = data[x + 1][y];
+            data[x + 1][y] = 0;
+            x++;
+            initImage();
+        } else if (code == 38){
+            System.out.println("向上移动");
+
+            if (y == 3){
+                //表示空白快已经在最下方了，下面没有图片能再移动了
+                return;
+            }
+            // x,y 表示当前空白块
+            data[x][y] = data[x][y + 1];
+            data[x][y + 1] = 0;
+            y++;
+            initImage();
+
+        }else if (code == 39){
+            System.out.println("向右移动");
+            if (x == 0){
+                return;
+            }
+            // x,y 表示当前空白块
+            data[x][y] = data[x - 1][y];
+            data[x - 1][y] = 0;
+            x--;
+            initImage();
+        }else if (code == 40){
+            if (y == 0){
+                return;
+            }
+            System.out.println("向下移动");
+            // x,y 表示当前空白块
+            data[x][y] = data[x][y - 1];
+            data[x][y - 1] = 0;
+            y--;
+            initImage();
+        }
+
     }
 }
