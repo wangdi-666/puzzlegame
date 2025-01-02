@@ -6,7 +6,7 @@ public class App {
     public static void main(String[] args) {
         // 程序启动入口
 
-        // 想开起谁的页面，就创建谁的对象就可以了
+        // 想开起谁的页面，就创建谁的对象
         // new LoginJFrame();
 
         new GameJFrame();

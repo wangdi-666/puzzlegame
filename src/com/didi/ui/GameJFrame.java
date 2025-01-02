@@ -1,9 +1,12 @@
 package com.didi.ui;
 
 import javax.swing.*;
+import java.util.Random;
 
 public class GameJFrame extends JFrame {
     // 跟主界面相关的代码，写在这个页面中
+
+    int[][] data = new int[4][4];
 
     public GameJFrame(){
         //初始化界面
@@ -12,6 +15,9 @@ public class GameJFrame extends JFrame {
         // 初始化菜单
         initMenuBar();
 
+        // 初始化数据（打乱）
+        initData();
+
         // 初始化图片
         initImage();
 
@@ -19,18 +25,35 @@ public class GameJFrame extends JFrame {
         this.setVisible(true);
     }
 
+    private void initData() {
+        int[] tempArr = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 10, 12, 13, 14, 15};
+        Random r = new Random();
+
+        for (int i = 0; i < tempArr.length; i++) {
+            int index = r.nextInt(tempArr.length);
+            int temp = tempArr[i];
+            tempArr[i] = tempArr[index];
+            tempArr[index] = temp;
+        }
+
+        for (int i = 0; i < tempArr.length; i++) {
+            data[i / 4][i % 4] = tempArr[i];
+        }
+
+    }
+
     // 初始化图片
     private void initImage() {
-        int number = 1;
+
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
+                int num = data[i][j];
 //            ImageIcon icon = new ImageIcon("D:\\code\\puzzlegame\\image\\animal\\animal3\\1.jpg");
-                JLabel jLabel = new JLabel(new ImageIcon("D:\\code\\puzzlegame\\image\\animal\\animal3\\"+ number +".jpg"));
+                JLabel jLabel = new JLabel(new ImageIcon("D:\\code\\puzzlegame\\image\\animal\\animal3\\"+ num +".jpg"));
                 // 指定图片位置
                 jLabel.setBounds(105 * i,j * 105,105,105);
 //        this.add(jLabel);
                 this.getContentPane().add(jLabel);
-                number++;
             }
         }
     }
