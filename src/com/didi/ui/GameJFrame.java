@@ -95,7 +95,7 @@ public class GameJFrame extends JFrame {
         // 设置界面居中
         this.setLocationRelativeTo(null);
         // 设置关闭模式
-        this.setDefaultCloseOperation(3);
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         // 取消默认的居中放置，只有取消了才会按照XY轴的形式添加组件
         this.setLayout(null);
