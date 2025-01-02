@@ -7,10 +7,10 @@ public class App {
         // 程序启动入口
 
         // 想开起谁的页面，就创建谁的对象就可以了
-        new LoginJFrame();
+        // new LoginJFrame();
 
         new GameJFrame();
 
-        new RegisterJFrame();
+        // new RegisterJFrame();
     }
 }
