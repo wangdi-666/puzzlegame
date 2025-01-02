@@ -2,11 +2,13 @@ package com.didi.ui;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Random;
 
-public class GameJFrame extends JFrame implements KeyListener {
+public class GameJFrame extends JFrame implements KeyListener, ActionListener {
     // 跟主界面相关的代码，写在这个页面中
 
     int[][] data = new int[4][4];
@@ -24,6 +26,14 @@ public class GameJFrame extends JFrame implements KeyListener {
             {3,7,11,15},
             {4,8,12,0}
     };
+
+    int step = 0;
+
+    JMenuItem replayItem = new JMenuItem("重新游戏");
+    JMenuItem reLoginItem = new JMenuItem("重新登录");
+    JMenuItem closeItem = new JMenuItem("关闭游戏");
+
+    JMenuItem accountItem = new JMenuItem("公众号");
 
     public GameJFrame(){
         //初始化界面
@@ -57,20 +67,10 @@ public class GameJFrame extends JFrame implements KeyListener {
             if (tempArr[i] == 0){
                 x = i / 4;
                 y = i % 4;
-            }else {
-                data[i / 4][i % 4] = tempArr[i];
             }
+            data[i / 4][i % 4] = tempArr[i];
+
         }
-//        for (int i = 0; i < tempArr.length; i++) {
-//            System.out.print(tempArr[i] + " ");
-//        }
-//        System.out.println();
-//        for (int i = 0; i < data.length; i++) {
-//            for (int j = 0; j < data[i].length; j++) {
-//                System.out.print(data[i][j] + " ");
-//            }
-//            System.out.println();
-//        }
 
     }
 
@@ -85,6 +85,10 @@ public class GameJFrame extends JFrame implements KeyListener {
             winJLabel.setBounds(203,283,197,73);
             this.getContentPane().add(winJLabel);
         }
+
+        JLabel stepCount = new JLabel("步数：" + step);
+        stepCount.setBounds(50,50,100,20);
+        this.getContentPane().add(stepCount);
 
         // 加载图片细节：先加载的图片会放在上面，后加载的图片在下面
         for (int i = 0; i < 4; i++) {
@@ -117,18 +121,17 @@ public class GameJFrame extends JFrame implements KeyListener {
         JMenu functionJMenu = new JMenu("功能");
         JMenu aboutJMenu = new JMenu("关于我们");
 
-        JMenuItem replayItem = new JMenuItem("重新游戏");
-        JMenuItem reLoginItem = new JMenuItem("重新登录");
-        JMenuItem closeItem = new JMenuItem("关闭游戏");
-
-        JMenuItem accountItem = new JMenuItem("公众号");
-
         // 将每一个选项下面的条目加到选项中
         functionJMenu.add(replayItem);
         functionJMenu.add(reLoginItem);
         functionJMenu.add(closeItem);
 
         aboutJMenu.add(accountItem);
+
+        replayItem.addActionListener(this);
+        reLoginItem.addActionListener(this);
+        closeItem.addActionListener(this);
+        accountItem.addActionListener(this);
 
         jMenuBar.add(functionJMenu);
         jMenuBar.add(aboutJMenu);
@@ -203,6 +206,8 @@ public class GameJFrame extends JFrame implements KeyListener {
             data[x][y] = data[x + 1][y];
             data[x + 1][y] = 0;
             x++;
+
+            step++;
             initImage();
         } else if (code == 38){
             System.out.println("向上移动");
@@ -215,6 +220,8 @@ public class GameJFrame extends JFrame implements KeyListener {
             data[x][y] = data[x][y + 1];
             data[x][y + 1] = 0;
             y++;
+
+            step++;
             initImage();
 
         }else if (code == 39){
@@ -226,6 +233,8 @@ public class GameJFrame extends JFrame implements KeyListener {
             data[x][y] = data[x - 1][y];
             data[x - 1][y] = 0;
             x--;
+
+            step++;
             initImage();
         }else if (code == 40){
             if (y == 0){
@@ -236,6 +245,8 @@ public class GameJFrame extends JFrame implements KeyListener {
             data[x][y] = data[x][y - 1];
             data[x][y - 1] = 0;
             y--;
+
+            step++;
             initImage();
         }else if (code == 65){
             initImage();
@@ -260,5 +271,49 @@ public class GameJFrame extends JFrame implements KeyListener {
             }
         }
         return true;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // 获取当前被点击的条目
+        Object obj = e.getSource();
+        if(obj == replayItem){
+            System.out.println("重新游戏");
+
+            //计步器清0
+            step = 0;
+            //再次打乱二维数组中的数据
+            initData();
+            //重新加载图片
+            initImage();
+
+
+        }else if (obj == reLoginItem){
+            System.out.println("重新登录");
+            //关闭当前的界面
+            this.setVisible(false);
+            //打开登录界面
+            new LoginJFrame();
+        }else if (obj == closeItem){
+            System.out.println("关闭游戏");
+            // 直接关闭JVM虚拟机
+            System.exit(0);
+        }else if (obj == accountItem){
+            System.out.println("公众号");
+            // 创建一个弹框对象
+            JDialog jDialog = new JDialog();
+            JLabel jLabel = new JLabel(new ImageIcon("image\\about.png"));
+            jLabel.setBounds(0,0,258,258);
+            jDialog.getContentPane().add(jLabel);
+            jDialog.setSize(344,344);
+            // 让弹框置顶
+            jDialog.setAlwaysOnTop(true);
+            // 让弹框居中
+            jDialog.setLocationRelativeTo(null);
+            // 弹框不关闭则无法操作下面的界面
+            jDialog.setModal(true);
+            // 让弹框显示出来
+            jDialog.setVisible(true);
+        }
     }
 }
