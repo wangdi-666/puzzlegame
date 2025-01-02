@@ -15,6 +15,16 @@ public class GameJFrame extends JFrame implements KeyListener {
     int x = 0;
     int y = 0;
 
+    // 定义一个变量，记录当前展示图片的路径
+    String path = "image\\animal\\animal8\\";
+
+    int[][] win = new int[][]{
+            {1,5,9,13},
+            {2,6,10,14},
+            {3,7,11,15},
+            {4,8,12,0}
+    };
+
     public GameJFrame(){
         //初始化界面
         initJFrame();
@@ -51,6 +61,16 @@ public class GameJFrame extends JFrame implements KeyListener {
                 data[i / 4][i % 4] = tempArr[i];
             }
         }
+//        for (int i = 0; i < tempArr.length; i++) {
+//            System.out.print(tempArr[i] + " ");
+//        }
+//        System.out.println();
+//        for (int i = 0; i < data.length; i++) {
+//            for (int j = 0; j < data[i].length; j++) {
+//                System.out.print(data[i][j] + " ");
+//            }
+//            System.out.println();
+//        }
 
     }
 
@@ -60,12 +80,18 @@ public class GameJFrame extends JFrame implements KeyListener {
         // 清空原本已经出现的所有图片
         this.getContentPane().removeAll();
 
+        if (victory()){
+            JLabel winJLabel = new JLabel(new ImageIcon("image\\win.png"));
+            winJLabel.setBounds(203,283,197,73);
+            this.getContentPane().add(winJLabel);
+        }
+
         // 加载图片细节：先加载的图片会放在上面，后加载的图片在下面
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 int num = data[i][j];
 //            ImageIcon icon = new ImageIcon("D:\\code\\puzzlegame\\image\\animal\\animal3\\1.jpg");
-                JLabel jLabel = new JLabel(new ImageIcon("image\\animal\\animal3\\"+ num +".jpg"));
+                JLabel jLabel = new JLabel(new ImageIcon(path+ num +".jpg"));
                 // 指定图片位置
                 jLabel.setBounds(105 * i + 83,j * 105 + 134,105,105);
 //        this.add(jLabel);
@@ -135,13 +161,33 @@ public class GameJFrame extends JFrame implements KeyListener {
 
     }
 
+    // 按下不松时
     @Override
     public void keyPressed(KeyEvent e) {
+        int code = e.getKeyCode();
+        if(code == 65){
+            this.getContentPane().removeAll();
 
+            JLabel all = new JLabel(new ImageIcon(path + "all.jpg"));
+            all.setBounds(83, 134, 420, 420);
+            this.getContentPane().add(all);
+
+            // 添加背景图片
+            JLabel background = new JLabel(new ImageIcon("image\\background.png"));
+            background.setBounds(40, 40, 508, 560);
+            this.getContentPane().add(background);
+
+            this.getContentPane().repaint();
+        }
     }
 
+    // 松开按键时
     @Override
     public void keyReleased(KeyEvent e) {
+        // 游戏胜利直接结束
+        if (victory()){
+            return;
+        }
         // 对上，下，左，右进行判断
         // 左：37 上：38 右：39 下： 40（不用记住，用到了直接打印）
         int code = e.getKeyCode();
@@ -191,7 +237,28 @@ public class GameJFrame extends JFrame implements KeyListener {
             data[x][y - 1] = 0;
             y--;
             initImage();
+        }else if (code == 65){
+            initImage();
+        }else if (code == 87){
+            data = new int[][]{
+                    {1,5,9,13},
+                    {2,6,10,14},
+                    {3,7,11,15},
+                    {4,8,12,0}
+            };
+            initImage();
         }
 
+    }
+
+    public boolean victory(){
+        for (int i = 0; i < data.length; i++) {
+            for (int j = 0; j < data[i].length; j++) {
+                if(data[i][j] != win[i][j]){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
